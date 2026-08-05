@@ -1,54 +1,13 @@
-# Problem Hook & Value Proposition — [StreamLine / RouteLogic / your initiative]
+# Problem Hook & Value Proposition (Module 1)
 
-> Module 1 · Develop Strategic Product Thinking — ★ Deliverable 1 (Part A)
->
-> Define the *why* behind your project: bridge the company's strategic crisis to a specific user's moment of misery.
-> This is a living document — draft it now, then finalize the **hypothesis** in Module 3.
+## Responses
+- **Chosen path, which scenario are you committing to? (StreamLine or RouteLogic, or your own):** StreamLine
+- **Strategic crisis, based on the brief, if the company does nothing for 12 months, what happens to its market position?:** If we do nothing for 12 months the company will consolidate itself as mid-tier content platform. Not growing in engagement.
+- **Moment of misery, what is the user likely doing outside the product (Google, spreadsheets, a competitor) because your tool isn’t serving them?:** Going to competitors like Netflix, Prime, HBO, Crunchyroll, or even Pirate sites.
+- **Problem hook, summarize the business risk and user pain into one urgent sentence.:** We must solve our low growth in engagement by addressing the quality of our content.
+- **Value proposition, based on the proposed initiative (Spotlight or Velocity), what is the new value and why is it urgent to launch now?:** For the users, we will add big titles to our catalog because our site is seen as a mid/low tier content platform and our numbers are not increasing.
 
-## 1. Chosen scenario
-
-**Path:** _StreamLine Spotlight (B2C) · RouteLogic Velocity (B2B) · my own initiative_
-
-_One line on why you picked it._
-
-## 2. The strategic crisis
-
-_The big-picture business risk. If the company does nothing for 12 months, what happens to its market position?_
-
-> If we do nothing for 12 months, the company will…
-
-## 3. The moment of misery
-
-_The specific point where the product fails the user, forcing a manual workaround (Google, spreadsheets, group texts, a competitor)._
-
-> The user is currently forced to…
-
-## 4. Problem hook
-
-_One urgent sentence fusing the business risk and the user pain — your pitch for why this is the most important thing to work on right now._
-
-> We must solve [business risk] by addressing [user pain]…
-
-## 5. Value proposition
-
-_Who it's for, the new value, and why it's urgent to launch now._
-
-> For **[who]**, we will **[value]** because **[urgent why]**.
-
-## 6. Cold-read self-review
-
-_Read your hook back as a skeptical stakeholder. If you don't feel the urgency, that's your data._
-
-| Question | Your answer |
-|---|---|
-| Is the business risk high-stakes enough to justify a new initiative? | _____ |
-| Is the moment of misery systemic, or just an edge case? | _____ |
-| Does the value proposition actually remove the obstacle? | _____ |
-
-## 7. Finalized hypothesis _(complete in Module 3)_
-
-> Based on [qual + quant evidence], I believe that [solving X] for [persona] will result in [outcome], as measured by a [X%] change in [success metric]. I will protect [guardrail metric] and make a go/no-go decision after [decision window].
-
-## Link to full artifact
-
-_[link to your Problem Hook Builder export / Slide 1 of your deliverables deck]_
+## Cold-read your own hook
+- **Is the business risk high enough to justify a new initiative, a high-stakes threat, or a minor inconvenience?:** I would believe so, a stagnating number of viewers on a platform that objectively has not great titles is most likely doomed to lose users as they consume the titles they are interested on and the site is left with no "new" good catalog.
+- **Is the moment of misery a systemic problem or just an edge case?:** A systemic one, the platform is clearly not investing in the top-tier titles and the user's opinions are showing that.
+- **Does the value proposition actually remove the obstacle you identified, or is it a generic feature?:** It does not remove it completely, since there will be a lot of market positioning involved and mouth-to-mouth so the platform ends up winning some reputation and people interested in the top-tier titles.
