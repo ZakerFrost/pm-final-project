@@ -1,42 +1,43 @@
-# Future-State Journey Map: Seamless Curated Viewing
+# Future State Journey Map — Recommendation-Led Discovery
 
-**Persona:** A subscriber who discovers, saves, and watches across phone, tablet, and television.  
-**Strategy:** Restore brand authority through human-led curation and reliable cross-device continuity.  
-**Value Proposition:** Preserve watchlists and progress everywhere, moving users from discovery to completion effortlessly.
+**Persona:** A frequent subscriber who opens the service wanting something new but relies heavily on recommendations to decide what to watch.  
+**Goal:** Find a compelling title quickly without having to evaluate hundreds of options.  
+**Friction:** They scroll through recommendation rows for an extended period, find nothing relevant, and leave without watching anything.  
+**Strategy:** Restore brand authority and win back users by prioritizing human-led curation and restoration over mass-market scale.  
+**Value Proposition:** For users, we will improve recommendations because they cannot easily find content tailored to their tastes.
 
-## Visual Timeline
+## One-Page Visual Timeline
 
 ```text
-① Curated Discovery ──▶ ② Confident Save ──▶ ③ Seamless Handoff ──▶ ④ Exact Resume
-   Guided choice          Intent preserved       Devices aligned          Viewing completed
+1. Curated Entry → 2. Guided Shortlist → 3. Confident Selection → 4. Satisfying Start
+   trusted start         fewer choices             fast decision             playback begins
 ```
 
-## 1. Curated Discovery
+## 1. Curated Entry
+- **Stage Name:** Curated Entry
+- **User Action:** Opens curated home shelf -> sees trusted picks immediately.
+- **Internal State:** Feels guided, not overwhelmed -> decision anxiety drops.
+- **Pain Point Addressed:** Human-led curation reduces overload -> less endless scrolling.
 
-- **User Action:** Chooses an editor-selected title → avoids endless, repetitive browsing.
-- **Internal State:** Feels guided and understood → confidence replaces catalogue anxiety.
-- **Pain Point Addressed:** Human curation narrows choice → discovery becomes purposeful, not exhausting.
+## 2. Guided Shortlist
+- **Stage Name:** Guided Shortlist
+- **User Action:** Chooses a mood or editorial collection -> narrows options fast.
+- **Internal State:** Feels understood -> recommendations seem relevant and intentional.
+- **Pain Point Addressed:** Better recommendation quality reduces repetition -> more discovery confidence.
 
-## 2. Confident Save
+## 3. Confident Selection
+- **Stage Name:** Confident Selection
+- **User Action:** Reviews a small tailored set -> picks one without overthinking.
+- **Internal State:** Trust replaces skepticism -> choice feels worth the evening.
+- **Pain Point Addressed:** Focused recommendations beat generic rows -> fewer abandoned sessions.
 
-- **User Action:** Saves the title once → every device displays the same watchlist.
-- **Internal State:** Trusts the account memory → no need to remember titles manually.
-- **Pain Point Addressed:** Instant synchronization confirms intent → saved content never disappears between devices.
-
-## 3. Seamless Handoff
-
-- **User Action:** Opens the service elsewhere → saved choices appear immediately.
-- **Internal State:** Feels reassured during device changes → continuity replaces uncertainty.
-- **Pain Point Addressed:** Account-level syncing preserves choices → no repeated searching or external reminders.
-
-## 4. Exact Resume
-
-- **User Action:** Selects Resume → playback starts at the exact saved moment.
-- **Internal State:** Feels satisfied and in control → chosen content reaches completion.
-- **Pain Point Addressed:** Accurate progress restoration removes scrubbing → no restarting, guessing, or abandonment.
+## 4. Satisfying Start
+- **Stage Name:** Satisfying Start
+- **User Action:** Starts watching quickly -> intent converts into real engagement.
+- **Internal State:** Feels rewarded -> platform earns authority and repeat trust.
+- **Pain Point Addressed:** Fast, relevant choice prevents dropout -> more content gets watched.
 
 ## Competitive Advantages Over the Manual Workaround
-
-- Unifies curation and continuity → transforms discovery into completed viewing.
-- Preserves intent automatically → eliminates notes, memory, and repeated searches.
-- Restores trust across screens → strengthens loyalty beyond catalogue scale.
+- Trusted curation replaces guesswork -> users stop relying on comfort rewatches.
+- Short tailored lists save time -> users avoid browsing competitors or external advice.
+- Better starts build trust -> engagement grows through more sessions and completions.
