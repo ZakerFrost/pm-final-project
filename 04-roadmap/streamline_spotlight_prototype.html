@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StreamLine Spotlight — Prototype</title>
+<style>
+  :root{
+    --bg:#080a0f;
+    --surface:#10131b;
+    --surface2:#151923;
+    --text:#f7f8fb;
+    --muted:#a9b0c1;
+    --line:#262c39;
+    --accent:#9d6cff;
+    --accent2:#d8c3ff;
+    --success:#5dd39e;
+    --warning:#ffcf70;
+    --shadow:0 18px 60px rgba(0,0,0,.34);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  body{min-height:100vh}
+  button{font:inherit}
+  button:focus-visible,.title-card:focus-visible{outline:3px solid var(--accent2);outline-offset:3px}
+
+  .app{min-height:100vh}
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    height:66px;padding:0 4vw;display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(180deg,rgba(8,10,15,.96),rgba(8,10,15,.84));
+    border-bottom:1px solid rgba(255,255,255,.05);backdrop-filter:blur(12px)
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:-.02em}
+  .logo{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#6b43ff,#c389ff);box-shadow:0 0 28px rgba(157,108,255,.35)}
+  .brand small{display:block;color:var(--muted);font-weight:600;font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;margin-top:1px}
+  .header-actions{display:flex;gap:10px;align-items:center}
+  .ghost-btn,.primary-btn,.secondary-btn{
+    border:1px solid var(--line);border-radius:11px;padding:10px 14px;color:var(--text);cursor:pointer;transition:.18s ease
+  }
+  .ghost-btn{background:#121620}.ghost-btn:hover{background:#191e2a}
+  .primary-btn{background:var(--text);color:#0a0c11;border-color:var(--text);font-weight:800}.primary-btn:hover{transform:translateY(-1px)}
+  .secondary-btn{background:transparent}.secondary-btn:hover{background:#171b24}
+
+  .screen{display:none;min-height:calc(100vh - 66px)}
+  .screen.active{display:block}
+  .home{padding:32px 4vw 70px}
+  .hero{max-width:760px;margin-bottom:28px}
+  .hero-kicker{color:var(--accent2);font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;margin-bottom:10px}
+  .hero h1{font-size:clamp(2.2rem,5vw,4.4rem);line-height:.98;letter-spacing:-.055em;margin:0 0 14px}
+  .hero p{color:var(--muted);font-size:1.03rem;line-height:1.65;margin:0;max-width:680px}
+
+  .rail-section{margin-top:34px}
+  .rail-heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:14px}
+  .rail-heading h2{font-size:1.22rem;margin:0;letter-spacing:-.02em}
+  .rail-heading p{margin:6px 0 0;color:var(--muted);font-size:.9rem}
+  .editorial-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(157,108,255,.35);background:rgba(157,108,255,.10);color:#dbcaff;border-radius:999px;padding:7px 10px;font-size:.75rem;font-weight:750;white-space:nowrap}
+  .editorial-chip i{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  .rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(170px,1fr);grid-template-rows:1fr;gap:14px;overflow-x:auto;padding:3px 2px 15px;scrollbar-width:thin;scrollbar-color:#363d4d transparent;scroll-snap-type:x proximity}
+  .title-card{appearance:none;border:0;padding:0;text-align:left;color:var(--text);background:transparent;cursor:pointer;scroll-snap-align:start;min-width:0}
+  .poster{position:relative;aspect-ratio:2/3;border-radius:14px;overflow:hidden;background:#222836;border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 30px rgba(0,0,0,.26);transition:.18s ease}
+  .title-card:hover .poster{transform:translateY(-4px);border-color:rgba(255,255,255,.22);box-shadow:0 20px 40px rgba(0,0,0,.38)}
+  .poster-art{position:absolute;inset:0;display:flex;align-items:flex-end;padding:18px;background:var(--art)}
+  .poster-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.77) 100%)}
+  .poster-mark{position:relative;z-index:2;font-size:2rem;font-weight:900;letter-spacing:-.06em;line-height:.9;text-shadow:0 4px 20px rgba(0,0,0,.45)}
+  .poster-placeholder{background:linear-gradient(135deg,#242a36,#151923);display:grid;place-items:center;color:#70798d;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;text-align:center;padding:20px}
+  .card-meta{padding:10px 2px 0}
+  .card-title{font-weight:780;font-size:.93rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-sub{color:var(--muted);font-size:.76rem;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .standard-rail .poster{aspect-ratio:16/9}
+  .standard-rail{grid-auto-columns:minmax(230px,1fr)}
+  .standard-rail .poster-mark{font-size:1.5rem}
+
+  .detail{min-height:calc(100vh - 66px);position:relative;overflow:hidden}
+  .detail-bg{position:absolute;inset:0;background:var(--detail-art);filter:saturate(.85);opacity:.8}
+  .detail-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#080a0f 0%,rgba(8,10,15,.9) 38%,rgba(8,10,15,.48) 70%,rgba(8,10,15,.68) 100%),linear-gradient(0deg,#080a0f 0%,transparent 55%)}
+  .detail-content{position:relative;z-index:2;min-height:calc(100vh - 66px);display:flex;align-items:center;padding:60px 7vw}
+  .detail-panel{max-width:620px}
+  .back-link{display:inline-flex;align-items:center;gap:8px;background:transparent;border:0;color:#d6dae3;cursor:pointer;padding:0;margin-bottom:32px;font-weight:700}
+  .detail-label{display:inline-flex;align-items:center;gap:8px;color:#e1d4ff;font-size:.75rem;text-transform:uppercase;letter-spacing:.11em;font-weight:850;margin-bottom:15px}
+  .detail-label::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .detail h1{font-size:clamp(3rem,7vw,6.3rem);line-height:.9;letter-spacing:-.065em;margin:0 0 18px;max-width:760px}
+  .facts{display:flex;gap:10px;flex-wrap:wrap;color:#d8dce5;font-size:.86rem;margin-bottom:22px}
+  .facts span{padding-right:10px;border-right:1px solid rgba(255,255,255,.24)}
+  .facts span:last-child{border-right:0}
+  .synopsis{color:#c2c8d4;line-height:1.7;font-size:1.02rem;margin:0 0 22px;max-width:570px}
+  .editor-note{border-left:3px solid var(--accent);padding:10px 0 10px 16px;color:#e8e0fb;line-height:1.55;margin-bottom:28px;max-width:560px}
+  .editor-note strong{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:#bda3f7;margin-bottom:4px}
+  .detail-actions{display:flex;gap:11px;flex-wrap:wrap}
+  .play-btn{display:inline-flex;align-items:center;gap:10px;font-size:1rem;padding:13px 20px}
+  .play-icon{width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:11px solid currentColor}
+
+  .confirm{padding:44px 4vw 70px;display:flex!important;align-items:center;justify-content:center}
+  .confirm-wrap{width:min(980px,100%)}
+  .player{position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:var(--confirm-art);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.08)}
+  .player::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.62))}
+  .player-ui{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+  .check{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:rgba(93,211,158,.18);border:1px solid rgba(93,211,158,.5);color:#8af1c1;font-size:1.7rem;font-weight:900;margin-bottom:15px}
+  .player-ui h1{font-size:clamp(2rem,5vw,4rem);margin:0 0 9px;letter-spacing:-.045em}
+  .player-ui p{margin:0;color:#e0e4ec;max-width:590px;line-height:1.55}
+  .playback-chip{margin-top:18px;display:inline-flex;gap:8px;align-items:center;padding:8px 11px;border-radius:999px;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.16);font-size:.78rem}
+  .confirm-actions{display:flex;justify-content:center;gap:11px;margin-top:18px;flex-wrap:wrap}
+
+  .prototype-bar{position:fixed;right:18px;bottom:18px;z-index:50;display:flex;gap:8px}
+  .prototype-btn{background:#1b2030;border:1px solid #323a4e;color:#e9edf5;border-radius:12px;padding:10px 13px;box-shadow:0 8px 30px rgba(0,0,0,.32);cursor:pointer;font-size:.82rem;font-weight:760}
+  .panel{position:fixed;right:18px;bottom:66px;width:min(390px,calc(100vw - 36px));max-height:min(680px,75vh);z-index:49;background:#10141d;border:1px solid #303747;border-radius:18px;box-shadow:0 22px 70px rgba(0,0,0,.5);overflow:auto;padding:18px;display:none}
+  .panel.open{display:block}
+  .panel h3{margin:0 0 5px}.panel>p{margin:0 0 16px;color:var(--muted);font-size:.82rem;line-height:1.45}
+  .control-group{margin:15px 0}.control-group label{display:block;font-size:.73rem;text-transform:uppercase;letter-spacing:.08em;color:#8992a7;font-weight:800;margin-bottom:8px}
+  .segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .segmented.two{grid-template-columns:repeat(2,1fr)}
+  .segmented button{padding:9px 8px;border-radius:9px;border:1px solid #303747;background:#161b26;color:#b9c0cf;cursor:pointer;font-size:.76rem}
+  .segmented button.active{background:#6f4de3;color:white;border-color:#8c6bef}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid #222837}
+  .switch-row span{font-size:.83rem;color:#d9deea}.switch{width:42px;height:24px;border-radius:999px;background:#343b4b;position:relative;cursor:pointer;border:0}.switch::after{content:"";width:18px;height:18px;border-radius:50%;background:white;position:absolute;top:3px;left:3px;transition:.18s}.switch.on{background:#7553e9}.switch.on::after{left:21px}
+  .telemetry{margin-top:18px;border-top:1px solid #252c3a;padding-top:15px}
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.metric{background:#151a25;border:1px solid #252c3a;border-radius:10px;padding:10px}.metric b{display:block;font-size:1.2rem}.metric span{font-size:.68rem;color:#8f98aa;text-transform:uppercase;letter-spacing:.06em}
+  .event-log{display:grid;gap:6px}.event{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.69rem;color:#c1c7d4;background:#0b0e14;border:1px solid #222837;border-radius:8px;padding:8px;line-height:1.4}
+  .event time{color:#7f899e}.panel-note{font-size:.72rem;color:#8d96a8;line-height:1.45;margin-top:9px}
+
+  .fallback-banner{margin:0 0 20px;padding:12px 14px;border:1px solid rgba(255,207,112,.35);background:rgba(255,207,112,.08);border-radius:12px;color:#f6d891;font-size:.84rem;display:none}
+  .fallback-banner.visible{display:block}
+
+  @media(max-width:760px){
+    .topbar{padding:0 18px}.home{padding:28px 18px 70px}.rail{grid-auto-columns:42vw}.standard-rail{grid-auto-columns:64vw}.hero h1{font-size:2.65rem}.detail-content{padding:34px 22px}.detail h1{font-size:3.6rem}.confirm{padding:28px 18px 70px}.brand small{display:none}
+  }
+</style>
+</head>
+<body>
+<div id="app" class="app"></div>
+<script>
+(function(){
+  'use strict';
+
+  const curatedBase = [
+    {id:'c1',title:'After the Rain',year:2025,runtime:'1h 46m',rating:'13+',genre:'Drama',mark:'AFTER\\nTHE RAIN',art:'linear-gradient(145deg,#38576c 0%,#172636 36%,#6f8190 67%,#d5a57e 100%)',synopsis:'A quiet coastal drama about two strangers who keep crossing paths after a summer storm changes both of their plans.',editorial:'Selected for its warm pacing, intimate performances, and the kind of ending that stays with you.'},
+    {id:'c2',title:'Paper Moons',year:2024,runtime:'1h 34m',rating:'7+',genre:'Comedy',mark:'PAPER\\nMOONS',art:'linear-gradient(145deg,#70294d 0%,#b44d65 37%,#e8a56a 68%,#443352 100%)',synopsis:'Two sisters inherit a failing neighborhood cinema and decide to save it with one impossible week of screenings.',editorial:'A light, generous crowd-pleaser chosen for viewers who want something easy without feeling disposable.'},
+    {id:'c3',title:'Northbound',year:2026,runtime:'2h 01m',rating:'13+',genre:'Adventure',mark:'NORTH\\nBOUND',art:'linear-gradient(145deg,#1c3c52 0%,#39718a 38%,#a2b6b4 63%,#d6d0b9 100%)',synopsis:'A reluctant traveler joins a winter rail journey and discovers that every stop carries a story worth staying for.',editorial:'Chosen for its sense of discovery: cinematic, accessible, and emotionally rewarding without demanding homework.'},
+    {id:'c4',title:'The Last Bookshop',year:2023,runtime:'1h 42m',rating:'7+',genre:'Drama',mark:'THE LAST\\nBOOKSHOP',art:'linear-gradient(145deg,#4b342b 0%,#846147 38%,#c69d68 70%,#2b2b27 100%)',synopsis:'When a beloved bookshop faces closure, its regulars quietly conspire to give it one unforgettable final month.',editorial:'Our editors picked this as a comforting, character-led story that rewards curiosity from the first scene.'},
+    {id:'c5',title:'Static Bloom',year:2025,runtime:'1h 51m',rating:'16+',genre:'Mystery',mark:'STATIC\\nBLOOM',art:'linear-gradient(145deg,#242042 0%,#624d8e 36%,#bf70a4 69%,#222a36 100%)',synopsis:'A radio producer hears a voice in an archived recording that seems to know what she will broadcast tomorrow.',editorial:'A sharp, unusual mystery selected when you want something different but still immediately gripping.'},
+    {id:'c6',title:'Sunday Table',year:2022,runtime:'1h 27m',rating:'7+',genre:'Comedy Drama',mark:'SUNDAY\\nTABLE',art:'linear-gradient(145deg,#645443 0%,#a98c62 40%,#ddc99d 70%,#704c3f 100%)',synopsis:'One family, one long lunch, and the tiny misunderstandings that become the stories everyone remembers.',editorial:'A relaxed, human-scale watch chosen for an evening when you want warmth without endless deciding.'}
+  ];
+
+  const fallback = [
+    {id:'f1',title:'Night Orchard',year:2024,runtime:'1h 39m',rating:'13+',genre:'Drama',mark:'NIGHT\\nORCHARD',art:'linear-gradient(145deg,#172b28,#31534a 45%,#8a7860)',synopsis:'An orchard keeper prepares to sell the family land, then receives an unexpected visitor during harvest week.',editorial:'A calm, beautifully observed fallback pick from the same editorial collection.'},
+    {id:'f2',title:'A Small Horizon',year:2023,runtime:'1h 31m',rating:'7+',genre:'Drama',mark:'A SMALL\\nHORIZON',art:null,synopsis:'A schoolteacher takes a spontaneous ferry trip and spends one day in a town she has never seen before.',editorial:'A gentle discovery title selected to keep Spotlight useful when other picks are unavailable.'},
+    {id:'f3',title:'Good Neighbors',year:2025,runtime:'1h 36m',rating:'7+',genre:'Comedy',mark:'GOOD\\nNEIGHBORS',art:'linear-gradient(145deg,#45435f,#8580a9 48%,#e3b58d)',synopsis:'A building-wide power cut turns a group of polite strangers into an accidental dinner party.',editorial:'A low-friction comedy selected for immediate, easy viewing.'}
+  ];
+
+  const standard = [
+    {id:'s1',title:'Velocity',sub:'Trending now',mark:'VELOCITY',art:'linear-gradient(120deg,#3a1822,#9d3038 45%,#d98350)'},
+    {id:'s2',title:'Blue District',sub:'Popular this week',mark:'BLUE\\nDISTRICT',art:'linear-gradient(120deg,#102f4b,#1f6684 48%,#72aabd)'},
+    {id:'s3',title:'Apex',sub:'Top 10 today',mark:'APEX',art:'linear-gradient(120deg,#1d1c27,#6d445b 48%,#b78372)'},
+    {id:'s4',title:'Second Chances',sub:'Because people are watching',mark:'SECOND\\nCHANCES',art:'linear-gradient(120deg,#4b372a,#8d6a43 50%,#c5a36a)'},
+    {id:'s5',title:'The Signal',sub:'Trending now',mark:'THE SIGNAL',art:'linear-gradient(120deg,#15272d,#38666b 50%,#8da5a2)'}
+  ];
+
+  let state = {
+    screen:'home',
+    selected:null,
+    segment:'Wanderer',
+    experiment:'Spotlight',
+    watched:new Set(['c6']),
+    stressWatched:false,
+    datasetFailure:false,
+    trackingEnabled:true,
+    panelOpen:false,
+    events:[],
+    playLoggedFor:null,
+    railScroll:0,
+    impressionKey:null
+  };
+
+  const app = document.getElementById('app');
+
+  function setState(patch){ state = Object.assign({},state,patch); render(); }
+  function timestamp(){ return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+  function logEvent(type,payload={}){
+    if(!state.trackingEnabled) return;
+    try{
+      const event={type,payload,time:timestamp()};
+      state.events=[event,...state.events].slice(0,16);
+    }catch(e){ /* analytics must never block user flow */ }
+  }
+  function eligibleSegment(){ return state.segment==='Wanderer' || state.segment==='Casual Browser'; }
+  function spotlightVisible(){ return state.experiment==='Spotlight' && eligibleSegment() && !state.datasetFailure; }
+
+  function watchedSet(){
+    const set=new Set(state.watched);
+    if(state.stressWatched){ ['c1','c2','c3','c4'].forEach(id=>set.add(id)); }
+    return set;
+  }
+  function curatedEligible(){
+    if(state.datasetFailure) return [];
+    const watched=watchedSet();
+    let items=curatedBase.filter(x=>!watched.has(x.id));
+    if(items.length<5){
+      const needed=5-items.length;
+      items=items.concat(fallback.filter(x=>!watched.has(x.id)).slice(0,needed));
+    }
+    return items.slice(0,7);
+  }
+
+  function maybeLogImpression(){
+    if(!spotlightVisible()) return;
+    const key=state.segment+'|'+state.experiment+'|'+state.stressWatched;
+    if(state.impressionKey===key) return;
+    state.impressionKey=key;
+    logEvent('spotlight_impression',{segment:state.segment,items:curatedEligible().length});
+  }
+
+  function artStyle(item){ return item.art || 'linear-gradient(145deg,#242a36,#151923)'; }
+  function escapeHtml(str){ return String(str).replace(/[&<>'"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[m])); }
+  function markHtml(mark){ return escapeHtml(mark).replace(/\\n/g,'<br>'); }
+
+  function card(item,spotlight=true){
+    const posterInner=item.art
+      ? `<div class="poster-art" style="--art:${item.art}"><div class="poster-mark">${markHtml(item.mark)}</div></div>`
+      : `<div class="poster-placeholder">Artwork unavailable<br>StreamLine</div>`;
+    return `<button class="title-card" data-title-id="${item.id}" data-spotlight="${spotlight?'1':'0'}" aria-label="Open ${escapeHtml(item.title)}">
+      <div class="poster">${posterInner}</div>
+      <div class="card-meta"><div class="card-title">${escapeHtml(item.title)}</div><div class="card-sub">${spotlight?`${item.year} · ${escapeHtml(item.genre)}`:escapeHtml(item.sub)}</div></div>
+    </button>`;
+  }
+
+  function topbar(){ return `<header class="topbar"><div class="brand"><div class="logo"></div><div>StreamLine<small>Spotlight prototype</small></div></div><div class="header-actions"><button class="ghost-btn" id="homeBtn">Home</button></div></header>`; }
+
+  function homeScreen(){
+    const visible=spotlightVisible();
+    const curated=curatedEligible();
+    const fallbackUsed=visible && curated.some(x=>x.id.startsWith('f'));
+    const rail=visible ? `<section class="rail-section" aria-labelledby="spotlight-heading">
+      <div class="rail-heading"><div><h2 id="spotlight-heading">Spotlight: Picks for Tonight</h2><p>A small set of new stories, selected to make choosing easier.</p></div><div class="editorial-chip"><i></i> Selected by StreamLine editors</div></div>
+      <div id="fallbackBanner" class="fallback-banner ${fallbackUsed?'visible':''}">Some curated picks are unavailable, so Spotlight has been safely filled from the editorial fallback set.</div>
+      <div class="rail" id="spotlightRail">${curated.map(x=>card(x,true)).join('')}</div>
+    </section>` : '';
+    const statusMessage = state.datasetFailure && eligibleSegment() && state.experiment==='Spotlight'
+      ? `<div class="fallback-banner visible">Spotlight content is currently unavailable. The existing StreamLine homepage remains fully usable.</div>`:'';
+    const nonTargetNote = !eligibleSegment() && state.experiment==='Spotlight'
+      ? `<div class="fallback-banner visible">Prototype targeting: Spotlight is not shown to Power Users. Existing homepage experience is preserved.</div>`:'';
+    const controlNote = state.experiment==='Control'
+      ? `<div class="fallback-banner visible">Control experience: Spotlight rail is intentionally withheld for experiment comparison.</div>`:'';
+
+    return `<main class="screen home active" id="homeScreen">
+      <section class="hero"><div class="hero-kicker">Tonight on StreamLine</div><h1>Less searching.<br>More watching.</h1><p>Jump into something worth your time. Spotlight gives low-intent viewers a short editorial path without replacing the rest of StreamLine.</p></section>
+      ${statusMessage}${nonTargetNote}${controlNote}${rail}
+      <section class="rail-section"><div class="rail-heading"><div><h2>Trending Now</h2><p>The existing homepage experience stays available.</p></div></div><div class="rail standard-rail">${standard.map(x=>card(x,false)).join('')}</div></section>
+      <section class="rail-section"><div class="rail-heading"><div><h2>Comfort Rewatches</h2><p>Familiar favorites remain untouched for highly engaged viewers.</p></div></div><div class="rail standard-rail">${standard.slice().reverse().map(x=>card(x,false)).join('')}</div></section>
+    </main>`;
+  }
+
+  function detailScreen(){
+    const x=state.selected;
+    if(!x) return '';
+    return `<main class="screen detail active" id="detailScreen">
+      <div class="detail-bg" style="--detail-art:${artStyle(x)}"></div>
+      <div class="detail-content"><div class="detail-panel">
+        <button class="back-link" id="backBtn">← Back to Spotlight</button>
+        <div class="detail-label">Human-curated Spotlight pick</div>
+        <h1>${escapeHtml(x.title)}</h1>
+        <div class="facts"><span>${x.year}</span><span>${escapeHtml(x.runtime)}</span><span>${escapeHtml(x.rating)}</span><span>${escapeHtml(x.genre)}</span></div>
+        <p class="synopsis">${escapeHtml(x.synopsis)}</p>
+        <div class="editor-note"><strong>Why our editors picked it</strong>${escapeHtml(x.editorial)}</div>
+        <div class="detail-actions"><button class="primary-btn play-btn" id="playBtn"><span class="play-icon"></span> Play now</button><button class="secondary-btn" id="backBtn2">Keep browsing</button></div>
+      </div></div>
+    </main>`;
+  }
+
+  function confirmScreen(){
+    const x=state.selected;
+    if(!x) return '';
+    return `<main class="screen confirm active" id="confirmScreen"><div class="confirm-wrap">
+      <div class="player" style="--confirm-art:${artStyle(x)}"><div class="player-ui"><div class="check">✓</div><h1>${escapeHtml(x.title)} started</h1><p>You moved from Spotlight to a new title in two actions. Playback is simulated in this prototype.</p><div class="playback-chip">▶ Started from Spotlight · New title</div></div></div>
+      <div class="confirm-actions"><button class="primary-btn" id="confirmHome">Back to Home</button><button class="secondary-btn" id="confirmReplay">Replay confirmation</button></div>
+    </div></main>`;
+  }
+
+  function panel(){
+    const impressions=state.events.filter(e=>e.type==='spotlight_impression').length;
+    const selections=state.events.filter(e=>e.type==='spotlight_title_selected').length;
+    const starts=state.events.filter(e=>e.type==='new_title_start').length;
+    const rate=impressions?Math.round(starts/impressions*100):0;
+    return `<div class="prototype-bar"><button class="prototype-btn" id="panelBtn">Prototype controls</button></div>
+    <aside class="panel ${state.panelOpen?'open':''}" id="panel">
+      <h3>Prototype controls</h3><p>Exercise targeting, fallback, and telemetry without adding user-facing product scope.</p>
+      <div class="control-group"><label>Audience segment</label><div class="segmented">${['Wanderer','Casual Browser','Power User'].map(s=>`<button data-segment="${s}" class="${state.segment===s?'active':''}">${s}</button>`).join('')}</div></div>
+      <div class="control-group"><label>Experiment</label><div class="segmented two">${['Spotlight','Control'].map(s=>`<button data-experiment="${s}" class="${state.experiment===s?'active':''}">${s}</button>`).join('')}</div></div>
+      <div class="control-group"><label>Edge cases</label>
+        <div class="switch-row"><span>Mark most curated titles watched</span><button class="switch ${state.stressWatched?'on':''}" id="watchedSwitch" aria-label="Toggle watched stress case"></button></div>
+        <div class="switch-row"><span>Simulate curated dataset failure</span><button class="switch ${state.datasetFailure?'on':''}" id="failureSwitch" aria-label="Toggle dataset failure"></button></div>
+        <div class="switch-row"><span>Prototype analytics enabled</span><button class="switch ${state.trackingEnabled?'on':''}" id="trackingSwitch" aria-label="Toggle analytics"></button></div>
+      </div>
+      <div class="telemetry"><label style="display:block;font-size:.73rem;text-transform:uppercase;letter-spacing:.08em;color:#8992a7;font-weight:800;margin-bottom:8px">Local telemetry</label>
+        <div class="metrics"><div class="metric"><b>${impressions}</b><span>Impressions</span></div><div class="metric"><b>${selections}</b><span>Selections</span></div><div class="metric"><b>${starts}</b><span>Starts</span></div></div>
+        <div class="metric" style="margin-bottom:10px"><b>${rate}%</b><span>Prototype start / impression</span></div>
+        <div class="event-log">${state.events.length?state.events.map(e=>`<div class="event"><time>${e.time}</time> ${escapeHtml(e.type)} ${escapeHtml(JSON.stringify(e.payload))}</div>`).join(''):'<div class="event">No events yet.</div>'}</div>
+        <div class="panel-note">All telemetry is in-memory only. Disabling analytics never blocks the experience.</div>
+      </div>
+    </aside>`;
+  }
+
+  function render(){
+    const savedScroll = state.railScroll;
+    maybeLogImpression();
+    app.innerHTML = topbar() + (state.screen==='home'?homeScreen():state.screen==='detail'?detailScreen():confirmScreen()) + panel();
+    bind();
+    if(state.screen==='home'){
+      const rail=document.getElementById('spotlightRail');
+      if(rail) requestAnimationFrame(()=>{rail.scrollLeft=savedScroll;});
+    }
+  }
+
+  function bind(){
+    const panelBtn=document.getElementById('panelBtn'); if(panelBtn) panelBtn.onclick=()=>setState({panelOpen:!state.panelOpen});
+    const homeBtn=document.getElementById('homeBtn'); if(homeBtn) homeBtn.onclick=()=>setState({screen:'home',selected:null,playLoggedFor:null});
+    document.querySelectorAll('[data-segment]').forEach(btn=>btn.onclick=()=>{state.impressionKey=null;setState({segment:btn.dataset.segment,screen:'home',selected:null});});
+    document.querySelectorAll('[data-experiment]').forEach(btn=>btn.onclick=()=>{state.impressionKey=null;setState({experiment:btn.dataset.experiment,screen:'home',selected:null});});
+    const w=document.getElementById('watchedSwitch'); if(w) w.onclick=()=>{state.impressionKey=null;setState({stressWatched:!state.stressWatched,screen:'home'});};
+    const f=document.getElementById('failureSwitch'); if(f) f.onclick=()=>{state.impressionKey=null;setState({datasetFailure:!state.datasetFailure,screen:'home'});};
+    const t=document.getElementById('trackingSwitch'); if(t) t.onclick=()=>setState({trackingEnabled:!state.trackingEnabled});
+
+    document.querySelectorAll('.title-card').forEach(btn=>{
+      btn.onclick=()=>{
+        if(btn.dataset.spotlight!=='1') return;
+        const rail=document.getElementById('spotlightRail');
+        if(rail) state.railScroll=rail.scrollLeft;
+        const item=curatedEligible().find(x=>x.id===btn.dataset.titleId);
+        if(!item) return;
+        logEvent('spotlight_title_selected',{titleId:item.id,title:item.title,segment:state.segment});
+        setState({screen:'detail',selected:item,playLoggedFor:null});
+      };
+    });
+    ['backBtn','backBtn2'].forEach(id=>{const el=document.getElementById(id);if(el) el.onclick=()=>setState({screen:'home'});});
+    const p=document.getElementById('playBtn'); if(p) p.onclick=()=>{
+      if(state.selected && state.playLoggedFor!==state.selected.id){
+        logEvent('new_title_start',{titleId:state.selected.id,title:state.selected.title,source:'Spotlight',segment:state.segment});
+        state.playLoggedFor=state.selected.id;
+      }
+      setState({screen:'confirm'});
+    };
+    const ch=document.getElementById('confirmHome'); if(ch) ch.onclick=()=>setState({screen:'home',selected:null,playLoggedFor:null});
+    const cr=document.getElementById('confirmReplay'); if(cr) cr.onclick=()=>setState({screen:'confirm'});
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
